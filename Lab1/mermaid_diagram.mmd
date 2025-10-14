@@ -1,0 +1,97 @@
+erDiagram
+ 
+  User {
+    uuid user_id PK
+    string email
+    string username
+    string avatar_url
+    timestamp created_at
+  }
+
+  Quiz {
+    uuid quiz_id PK
+    uuid author_id FK
+    string title
+    text description
+    int time_limit
+    int attempts_limit
+    timestamp created_at
+    timestamp updated_at
+    string difficulty
+  }
+
+  QuizAttempt {
+    uuid attempt_id PK
+    uuid quiz_id FK
+    uuid user_id FK
+    timestamp started_at
+    timestamp finished_at
+    int score
+    string attempt_status
+  }
+
+  Question {
+    uuid question_id PK
+    uuid quiz_id FK
+    text question_text
+    string question_type
+    int points
+  }
+
+  AnswerOption {
+    uuid answer_option_id PK
+    uuid question_id FK
+    text option_text
+    bool is_correct
+  }
+
+QuestionResponse {
+    uuid question_response_id PK
+    uuid attempt_id FK
+    uuid question_id FK
+    text free_text_answer
+    int earned_points
+  }
+
+  Review {
+    uuid review_id PK
+    uuid user_id FK
+    uuid quiz_id FK
+    int rating
+    text review_text
+    timestamp created_at
+  }
+
+  SelectedAnswer {
+    uuid question_response_id PK,FK
+    uuid answer_option_id PK,FK
+  }
+
+  UserQuizStats {
+    uuid user_id PK, FK
+    uuid quiz_id PK, FK
+    int best_score
+    int last_score
+    timestamp updated_at
+    timestamp created_at
+    int attempts
+  }
+
+  User ||--o{ Quiz : "authors"
+  User ||--o{ QuizAttempt : "takes"
+  Quiz ||--o{ QuizAttempt : "has"
+
+  Quiz ||--|{ Question : "contains"
+  Question ||--|{ AnswerOption : "has"
+
+  QuizAttempt ||--o{ QuestionResponse : "records"
+  Question ||--o{ QuestionResponse : "answered"
+
+  User ||--o{ Review : "writes"
+  Quiz ||--o{ Review : "receives"
+
+  User ||--o{ UserQuizStats : "has"
+  Quiz ||--o{ UserQuizStats : "aggregated in"
+
+  QuestionResponse ||--o{ SelectedAnswer : "has details in"
+  AnswerOption ||--o{ SelectedAnswer : "is selected in"
