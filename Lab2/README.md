@@ -70,3 +70,6 @@ erDiagram
 
       * `review_id` (PK): Унікальний ідентифікатор.
       * `user_id` (FK), `quiz_id` (FK): Зовнішні ключі, що посилаються на автора відгуку та квіз. **Обмеження**: Поле `rating` приймає лише числові значення від 0 до 5 завдяки `CHECK`.
+
+<img width="848" height="291" alt="image" src="https://github.com/user-attachments/assets/0e42e515-10b6-4565-8449-d3f05bddd718" />
+
