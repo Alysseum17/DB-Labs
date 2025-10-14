@@ -1,4 +1,6 @@
 CREATE TYPE difficulty AS ENUM ('easy','medium','hard');
+CREATE TYPE question_type AS ENUM ('single_choice', 'multiple_choice', 'free_text');
+CREATE TYPE attempt_status AS ENUM ('in_progress', 'completed', 'time_expired', 'cancelled');
 CREATE TABLE IF NOT EXISTS users (
 	user_id SERIAL PRIMARY KEY,
 	username VARCHAR(32) UNIQUE NOT NULL,
@@ -26,6 +28,30 @@ CREATE TABLE IF NOT EXISTS reviews (
 	review_text TEXT,
 	created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
+
+CREATE TABLE IF NOT EXISTS questions (
+   question_id SERIAL PRIMARY KEY,
+   quiz_id INTEGER NOT NULL REFERENCES quizes(quiz_id) ON DELETE CASCADE,
+   question_text TEXT NOT NULL,
+   question_type QUESTION_TYPE NOT NULL,
+   points SMALLINT NOT NULL CHECK(points >= 0)
+);
+CREATE TABLE IF NOT EXISTS answer_options (
+   answer_option_id SERIAL PRIMARY KEY,
+   question_id INTEGER NOT NULL REFERENCES questions(question_id) ON DELETE CASCADE,
+   option_text TEXT NOT NULL,
+   is_correct BOOLEAN NOT NULL
+);
+CREATE TABLE IF NOT EXISTS quiz_attempts (
+   attempt_id SERIAL PRIMARY KEY,
+   user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+   quiz_id INTEGER NOT NULL REFERENCES quizes(quiz_id) ON DELETE CASCADE,
+   started_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+   finished_at TIMESTAMP WITH TIME ZONE,
+   score SMALLINT CHECK(score >= 0 AND score <= 100),
+   attempt_status ATTEMPT_STATUS NOT NULL DEFAULT 'in_progress'
+);
+
 INSERT INTO users (username, email, avatar_url, created_at)
 VALUES
     ('shadow_specter', 'specter@example.net', 'https://example.com/avatars/specter.png', '2023-05-15 10:30:00'),
@@ -61,3 +87,129 @@ VALUES
     (3, 7, 5, NULL, '2024-03-10 21:00:00'),
     (9, 10, 4, 'Good test for practice!', '2024-05-12 14:05:21'),
     (2, 4, 4, NULL, '2023-11-01 13:00:00');
+INSERT INTO questions (quiz_id, question_text, question_type, points)
+VALUES
+    (1, 'Яка команда використовується для вибірки даних з таблиці?', 'single_choice', 10),
+    (1, 'Які з цих операторів використовуються для фільтрації даних?', 'multiple_choice', 15),
+    (1, 'Як називається процес об''єднання даних з кількох таблиць?', 'free_text', 10),
+	
+    (2, 'В якому році була проголошена незалежність України?', 'single_choice', 10),
+    (2, 'Хто був гетьманом Війська Запорозького під час битви під Конотопом?', 'free_text', 15),
+
+    (3, 'Хто є автором роману "Майстер і Маргарита"?', 'single_choice', 10),
+    (3, 'Назвіть українського поета, представника "розстріляного відродження".', 'free_text', 15),
+
+    (4, 'Які з цих річок протікають в Південній Америці?', 'multiple_choice', 15),
+    (4, 'Як називається найбільша пустеля у світі?', 'free_text', 10),
+
+    (5, 'Яка команда використовується для створення образу (image) з Dockerfile?', 'single_choice', 10),
+    (5, 'Що таке Docker-контейнер?', 'free_text', 15),
+
+    (6, 'Яка тварина є найбільшою на Землі?', 'single_choice', 10),
+    (6, 'Який птах не вміє літати, але є чудовим плавцем?', 'free_text', 10),
+
+    (7, 'Яка складність алгоритму сортування бульбашкою в найгіршому випадку?', 'single_choice', 15),
+    (7, 'Що таке рекурсія в програмуванні?', 'free_text', 10),
+
+    (8, 'Які планети Сонячної системи є газовими гігантами?', 'multiple_choice', 15),
+    (8, 'Хто був першою людиною, яка вийшла у відкритий космос?', 'free_text', 10),
+
+    (9, 'Що означає червоний сигнал світлофора?', 'single_choice', 5),
+    (9, 'Що таке "головна дорога"?', 'free_text', 10),
+
+    (10, 'Що означає фразове дієслово "give up"?', 'single_choice', 10),
+    (10, 'Наведіть приклад речення з фразовим дієсловом "look forward to".', 'free_text', 10),
+
+    (11, 'Прапор якої країни складається з червоного кола на білому тлі?', 'single_choice', 10),
+    (11, 'Опишіть прапор Канади.', 'free_text', 10),
+
+    (12, 'Які з цих фільмів зняв Квентін Тарантіно?', 'multiple_choice', 15),
+    (12, 'З якого фільму фраза "I''ll be back"?', 'free_text', 10);
+
+INSERT INTO answer_options (question_id, option_text, is_correct)
+VALUES
+    (1, 'SELECT', TRUE),
+    (1, 'UPDATE', FALSE),
+    (1, 'DELETE', FALSE),
+
+    (2, 'WHERE', TRUE),
+    (2, 'HAVING', TRUE),
+    (2, 'ORDER BY', FALSE),
+    (2, 'GROUP BY', FALSE),
+	
+   	(3, 'Join', TRUE),
+    (3, 'Об''єднання', TRUE),
+	
+    (4, '1989', FALSE),
+    (4, '1991', TRUE),
+    (4, '1996', FALSE),
+	
+    (5, 'Іван Виговський', TRUE),
+    (5, 'Виговський', TRUE),
+
+    (6, 'Федір Достоєвський', FALSE),
+    (6, 'Лев Толстой', FALSE),
+    (6, 'Михайло Булгаков', TRUE),
+
+    (8, 'Ніл', FALSE),
+    (8, 'Амазонка', TRUE),
+    (8, 'Парана', TRUE),
+    (8, 'Янцзи', FALSE),
+
+	(9, 'Антарктична пустеля', TRUE),
+    (9, 'Антарктида', TRUE),
+
+    (10, 'docker run', FALSE),
+    (10, 'docker build', TRUE),
+    (10, 'docker pull', FALSE),
+
+    (12, 'Слон', FALSE),
+    (12, 'Синій кит', TRUE),
+    (12, 'Жираф', FALSE),
+
+	(13, 'Пінгвін', TRUE),
+	(13, 'Penguin', TRUE),
+
+    (14, 'O(n)', FALSE),
+    (14, 'O(n log n)', FALSE),
+    (14, 'O(n^2)', TRUE),
+
+    (16, 'Марс', FALSE),
+    (16, 'Юпітер', TRUE),
+    (16, 'Сатурн', TRUE),
+    (16, 'Венера', FALSE),
+
+    (18, 'Рух дозволено', FALSE),
+    (18, 'Рух заборонено', TRUE),
+    (18, 'Приготуватися до руху', FALSE),
+
+    (20, 'Продовжувати', FALSE),
+    (20, 'Здаватися, кидати', TRUE),
+    (20, 'Починати', FALSE),
+
+    (22, 'Китай', FALSE),
+    (22, 'Японія', TRUE),
+    (22, 'Туреччина', FALSE),
+
+    (24, 'Кримінальне чтиво', TRUE),
+    (24, 'Форрест Гамп', FALSE),
+    (24, 'Скажені пси', TRUE),
+    (24, 'Матриця', FALSE),
+
+	(25, 'Термінатор', TRUE),
+    (25, 'The Terminator', TRUE),
+	(25, 'Terminator', TRUE);
+
+INSERT INTO quiz_attempts (user_id, quiz_id, started_at, finished_at, score, attempt_status)
+VALUES
+    (1, 1, '2025-10-14 17:10:00', '2025-10-14 17:18:30', 85, 'completed'),
+    (1, 1, '2025-10-14 19:00:00', '2025-10-14 19:15:00', 70, 'completed'),
+    (1, 1, '2025-10-14 21:30:00', '2025-10-14 21:42:00', 95, 'completed'),
+    (2, 2, '2025-10-11 11:05:00', '2025-10-11 11:24:15', 78, 'completed'),
+    (3, 1, '2025-09-20 18:00:00', '2025-09-20 18:11:45', 80, 'completed'),
+    (3, 1, '2025-09-21 19:15:00', '2025-09-21 19:25:10', 70, 'completed'),
+    (4, 5, '2025-08-30 22:30:00', '2025-08-30 22:42:05', 100, 'completed'),
+    (5, 4, '2025-07-15 14:00:00', '2025-07-15 14:11:30', 85, 'completed'),
+    (8, 2, '2025-10-12 13:00:00', '2025-10-12 13:19:00', 88, 'completed'),
+    (2, 1, '2025-10-14 08:30:00', '2025-10-14 08:39:22', 75, 'completed'),
+    (6, 7, '2025-10-14 22:00:00', NULL, NULL, 'in_progress');
