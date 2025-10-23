@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS users (
 	email VARCHAR(32) UNIQUE NOT NULL,
 	avatar_url VARCHAR(255),
 	created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+is_active BOOLEAN NOT NULL DEFAULT true
 );
 
 CREATE TABLE IF NOT EXISTS quizes (
@@ -18,6 +19,7 @@ CREATE TABLE IF NOT EXISTS quizes (
 	created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
 	updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
 	difficulty DIFFICULTY
+is_active BOOLEAN NOT NULL DEFAULT true
 );
 CREATE TABLE IF NOT EXISTS reviews (
 	review_id SERIAL PRIMARY KEY,
@@ -34,6 +36,7 @@ CREATE TABLE IF NOT EXISTS questions (
    question_text TEXT NOT NULL,
    question_type question_type NOT NULL,
    points SMALLINT NOT NULL CHECK(points >= 0)
+is_active BOOLEAN NOT NULL DEFAULT true
 );
 CREATE TABLE IF NOT EXISTS answer_options (
    answer_option_id SERIAL PRIMARY KEY,
