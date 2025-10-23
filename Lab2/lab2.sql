@@ -60,8 +60,8 @@ CREATE TABLE IF NOT EXISTS question_responses (
    earned_points SMALLINT NOT NULL,
 );
 CREATE TABLE IF NOT EXISTS selected_answers (
-   question_response_id INTEGER NOT NULL REFERENCES question_responses(question_response_id),
-   answer_option_id INTEGER NOT NULL REFERENCES answer_options(answer_option_id),
+   question_response_id INTEGER NOT NULL REFERENCES question_responses(question_response_id) ON DELETE CASCADE,
+   answer_option_id INTEGER NOT NULL REFERENCES answer_options(answer_option_id) ON DELETE CASCADE,
    PRIMARY KEY (question_response_id, answer_option_id)
 );
 CREATE TABLE IF NOT EXISTS user_quiz_stats (
