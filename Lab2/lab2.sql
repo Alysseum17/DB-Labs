@@ -1,6 +1,5 @@
 CREATE TYPE difficulty AS ENUM ('easy','medium','hard');
 CREATE TYPE question_type AS ENUM ('single_choice', 'multiple_choice', 'free_text');
-CREATE TYPE attempt_status AS ENUM ('in_progress', 'completed', 'time_expired', 'cancelled');
 CREATE TABLE IF NOT EXISTS users (
 	user_id SERIAL PRIMARY KEY,
 	username VARCHAR(32) UNIQUE NOT NULL,
@@ -26,14 +25,14 @@ CREATE TABLE IF NOT EXISTS reviews (
 	quiz_id INTEGER NOT NULL REFERENCES quizes(quiz_id) ON DELETE CASCADE,
 	rating NUMERIC(2,1) NOT NULL CHECK(rating >=0 AND rating <=5),
 	review_text TEXT,
-	created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+	created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+ updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
-
 CREATE TABLE IF NOT EXISTS questions (
    question_id SERIAL PRIMARY KEY,
    quiz_id INTEGER NOT NULL REFERENCES quizes(quiz_id) ON DELETE CASCADE,
    question_text TEXT NOT NULL,
-   question_type QUESTION_TYPE NOT NULL,
+   question_type question_type NOT NULL,
    points SMALLINT NOT NULL CHECK(points >= 0)
 );
 CREATE TABLE IF NOT EXISTS answer_options (
@@ -48,15 +47,14 @@ CREATE TABLE IF NOT EXISTS quiz_attempts (
    quiz_id INTEGER NOT NULL REFERENCES quizes(quiz_id) ON DELETE CASCADE,
    started_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
    finished_at TIMESTAMP WITH TIME ZONE,
-   score SMALLINT CHECK(score >= 0 AND score <= 100),
-   attempt_status ATTEMPT_STATUS NOT NULL DEFAULT 'in_progress'
+   score SMALLINT CHECK(score >= 0 AND score <= 100)
 );
 CREATE TABLE IF NOT EXISTS question_responses (
    question_response_id SERIAL PRIMARY KEY,
    attempt_id INTEGER NOT NULL REFERENCES quiz_attempts(attempt_id) ON DELETE CASCADE,
    question_id INTEGER NOT NULL REFERENCES questions(question_id) ON DELETE CASCADE,
    free_text_answer TEXT,
-   earned_points SMALLINT NOT NULL
+   earned_points SMALLINT NOT NULL,
 );
 CREATE TABLE IF NOT EXISTS selected_answers (
    question_response_id INTEGER NOT NULL REFERENCES question_responses(question_response_id),
@@ -101,13 +99,13 @@ VALUES
     (8, 'Класика кіно 90-х', 'Впізнай культовий фільм за відомим кадром або цитатою.', NULL, NULL, NULL, '2024-05-20 18:30:00', '2024-05-21 10:00:00');
 INSERT INTO reviews (user_id, quiz_id, rating, review_text, created_at)
 VALUES
-    (3, 1, 5, 'Чудовий тест для початківців! Все чітко і по темі.', '2023-06-03 12:15:00'),
-    (5, 1, 4, 'Непогано, але хотілося б більше складних питань.', '2023-06-04 09:00:00'),
-    (1, 2, 5, 'Дуже цікавий та пізнавальний тест. Дізнався багато нового.', '2023-08-01 16:45:00'),
-    (7, 5, 3, 'Заскладно для початківців, деякі питання незрозумілі.', '2024-02-01 11:30:00'),
-    (3, 7, 5, NULL, '2024-03-10 21:00:00'),
-    (9, 10, 4, 'Good test for practice!', '2024-05-12 14:05:21'),
-    (2, 4, 4, NULL, '2023-11-01 13:00:00');
+    (3, 1, 5, 'Чудовий тест для початківців! Все чітко і по темі.', '2023-06-03 12:15:00', '2023-06-03 12:15:00'),
+    (5, 1, 4, 'Непогано, але хотілося б більше складних питань.', '2023-06-04 09:00:00', '2023-06-04 09:00:00'),
+    (1, 2, 5, 'Дуже цікавий та пізнавальний тест. Дізнався багато нового.', '2023-08-01 16:45:00', '2023-08-01 16:45:00'),
+    (7, 5, 3, 'Заскладно для початківців, деякі питання незрозумілі.', '2024-02-01 11:30:00', '2024-02-01 11:30:00'),
+    (3, 7, 5, NULL, '2024-03-10 21:00:00','2024-03-10 21:00:00'),
+    (9, 10, 4, 'Good test for practice!', '2024-05-12 14:05:21', '2024-05-12 14:05:21'),
+    (2, 4, 4, NULL, '2023-11-01 13:00:00', '2023-11-01 13:00:00');
 INSERT INTO questions (quiz_id, question_text, question_type, points)
 VALUES
     (1, 'Яка команда використовується для вибірки даних з таблиці?', 'single_choice', 10),
@@ -149,51 +147,48 @@ VALUES
 
 INSERT INTO answer_options (question_id, option_text, is_correct)
 VALUES
+    -- Варіанти для питання №1 (про SELECT)
     (1, 'SELECT', TRUE),
     (1, 'UPDATE', FALSE),
     (1, 'DELETE', FALSE),
 
+    -- Варіанти для питання №2 (про фільтрацію)
     (2, 'WHERE', TRUE),
     (2, 'HAVING', TRUE),
     (2, 'ORDER BY', FALSE),
     (2, 'GROUP BY', FALSE),
-	
-   	(3, 'Join', TRUE),
-    (3, 'Об''єднання', TRUE),
-	
+
+    -- Варіанти для питання №4 (про незалежність)
     (4, '1989', FALSE),
     (4, '1991', TRUE),
     (4, '1996', FALSE),
-	
-    (5, 'Іван Виговський', TRUE),
-    (5, 'Виговський', TRUE),
 
+    -- Варіанти для питання №6 (про Булгакова)
     (6, 'Федір Достоєвський', FALSE),
     (6, 'Лев Толстой', FALSE),
     (6, 'Михайло Булгаков', TRUE),
 
+    -- Варіанти для питання №8 (про річки)
     (8, 'Ніл', FALSE),
     (8, 'Амазонка', TRUE),
     (8, 'Парана', TRUE),
     (8, 'Янцзи', FALSE),
 
-	(9, 'Антарктична пустеля', TRUE),
-    (9, 'Антарктида', TRUE),
-
+    -- Варіанти для питання №10 (про docker build)
     (10, 'docker run', FALSE),
     (10, 'docker build', TRUE),
     (10, 'docker pull', FALSE),
 
+    -- Варіанти для питання №12 (про синього кита)
     (12, 'Слон', FALSE),
     (12, 'Синій кит', TRUE),
     (12, 'Жираф', FALSE),
 
-	(13, 'Пінгвін', TRUE),
-	(13, 'Penguin', TRUE),
-
+    -- Варіанти для питання №14 (про сортування)
     (14, 'O(n)', FALSE),
     (14, 'O(n log n)', FALSE),
     (14, 'O(n^2)', TRUE),
+
 
     (16, 'Марс', FALSE),
     (16, 'Юпітер', TRUE),
@@ -215,50 +210,8 @@ VALUES
     (24, 'Кримінальне чтиво', TRUE),
     (24, 'Форрест Гамп', FALSE),
     (24, 'Скажені пси', TRUE),
-    (24, 'Матриця', FALSE),
-
-	(25, 'Термінатор', TRUE),
-    (25, 'The Terminator', TRUE),
-	(25, 'Terminator', TRUE);
-
-INSERT INTO quiz_attempts (user_id, quiz_id, started_at, finished_at, score, attempt_status)
-VALUES
-    (1, 1, '2025-10-14 17:10:00', '2025-10-14 17:18:30', 85, 'completed'),
-    (1, 1, '2025-10-14 19:00:00', '2025-10-14 19:15:00', 70, 'completed'),
-    (1, 1, '2025-10-14 21:30:00', '2025-10-14 21:42:00', 95, 'completed'),
-    (2, 2, '2025-10-11 11:05:00', '2025-10-11 11:24:15', 78, 'completed'),
-    (3, 1, '2025-09-20 18:00:00', '2025-09-20 18:11:45', 80, 'completed'),
-    (3, 1, '2025-09-21 19:15:00', '2025-09-21 19:25:10', 70, 'completed'),
-    (4, 5, '2025-08-30 22:30:00', '2025-08-30 22:42:05', 100, 'completed'),
-    (5, 4, '2025-07-15 14:00:00', '2025-07-15 14:11:30', 85, 'completed'),
-    (8, 2, '2025-10-12 13:00:00', '2025-10-12 13:19:00', 88, 'completed'),
-    (2, 1, '2025-10-14 08:30:00', '2025-10-14 08:39:22', 75, 'completed'),
-    (6, 7, '2025-10-14 22:00:00', NULL, NULL, 'in_progress');
-INSERT INTO question_responses (attempt_id, question_id, free_text_answer, earned_points)
-VALUES
-    (1, 1, NULL, 10),
-    (1, 2, NULL, 7),  
-    (1, 3, 'JOIN', 10), 
-
-    (4, 4, NULL, 10),
-    (4, 5, 'Іван Мазепа', 0), 
-
-    (7, 10, NULL, 10), 
-    (7, 11, 'Це ізольоване середовище для запуску додатку.', 12),
+    (24, 'Матриця', FALSE);
 	
-    (8, 8, NULL, 15), 
-    (8, 9, 'Сахара', 10);
-
-INSERT INTO selected_answers (question_response_id, answer_option_id)
-VALUES
-    (1, 1), 
-    (2, 4), 
-    (2, 6), 
-    (4, 8), 
-    (6, 20), 
-    (8, 14), 
-    (8, 15); 
-
 INSERT INTO user_quiz_stats (user_id, quiz_id, best_score, last_score, attempts, created_at, updated_at)
 VALUES
     (1, 1, 95, 95, 3, '2025-10-14 17:10:00', '2025-10-14 21:42:00'),
@@ -271,3 +224,19 @@ VALUES
     (8, 2, 88, 80, 2, '2025-10-12 13:00:00', '2025-10-13 15:45:00'),
     (9, 10, 98, 98, 1, '2025-06-18 09:00:00', '2025-06-18 09:00:00'),
     (2, 1, 75, 75, 1, '2025-10-14 08:30:00', '2025-10-14 08:30:00');
+INSERT INTO quiz_attempts (user_id, quiz_id, started_at, finished_at, score)
+VALUES
+    (1, 1, '2025-10-14 17:10:00', '2025-10-14 17:18:30', 85),
+    (1, 1, '2025-10-14 19:00:00', '2025-10-14 19:15:00', 70),
+    (1, 1, '2025-10-14 21:30:00', '2025-10-14 21:42:00', 95),
+    (2, 2, '2025-10-11 11:05:00', '2025-10-11 11:24:15', 78),
+    (3, 1, '2025-09-20 18:00:00', '2025-09-20 18:11:45', 80),
+    (3, 1, '2025-09-21 19:15:00', '2025-09-21 19:25:10', 70),
+    (4, 5, '2025-08-30 22:30:00', '2025-08-30 22:42:05', 100),
+    (5, 4, '2025-07-15 14:00:00', '2025-07-15 14:11:30', 85),
+    (8, 2, '2025-10-12 13:00:00', '2025-10-12 13:19:00', 88),
+    (2, 1, '2025-10-14 08:30:00', '2025-10-14 08:39:22', 75),
+    (6, 7, '2025-10-14 22:00:00', NULL, NULL);
+
+
+
