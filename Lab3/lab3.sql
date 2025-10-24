@@ -5,6 +5,12 @@ SELECT AVG(score) as average_score FROM quiz_attempts WHERE quiz_id = 1;
 SELECT * FROM questions WHERE points BETWEEN 5 AND 10 AND is_active;
 SELECT title,created_at FROM quizes WHERE is_active ORDER BY created_at DESC LIMIT 5;
 SELECT AVG(rating) AS average_rating FROM reviews WHERE quiz_id = 1;
+SELECT * FROM users WHERE email = 'zephyr@example.net' AND is_active;
+SELECT title,difficulty FROM quizes WHERE difficulty IN('easy','medium') AND is_active;
+SELECT title FROM quizes WHERE time_limit IS NOT NULL AND is_active;
+SELECT question_text FROM questions WHERE question_text ILIKE '%Docker%' AND is_active;
+
+
 -- INSERT
 INSERT INTO users (username, email, avatar_url, created_at)
 VALUES
@@ -18,26 +24,41 @@ VALUES
     (12, 5, 4, 'Docker - складно, але корисно. Дякую автору.', '2025-10-23 11:30:00'),
     (1, 3, 3, 'Дуже складний тест по літературі. Ледве впорався.', '2025-10-23 14:00:00');
 SELECT * FROM reviews ORDER BY created_at DESC LIMIT 3;
+INSERT INTO quiz_attempts (user_id, quiz_id, started_at, finished_at, score, attempt_status)
+VALUES
+    (11, 4, '2025-10-23 11:05:00', '2025-10-23 11:09:30', 90, 'completed'),
+    (12, 5, '2025-10-23 11:15:00', '2025-10-23 11:28:00', 75, 'completed'),
+    (13, 1, '2025-10-23 13:00:00', NULL, NULL, 'in_progress');
+SELECT * FROM quiz_attempts ORDER BY started_at DESC LIMIT 3;
 -- UPDATE
-UPDATE user_quiz_stats SET last_score = 100, best_score = GREATEST(best_score, 100), updated_at = NOW(), attempts= attempts + 1 
-WHERE user_id = 1 AND quiz_id = 1;
-SELECT * FROM user_quiz_stats ORDER BY updated_at DESC LIMIT 1;
+UPDATE user_quiz_stats SET last_score = 100, best_score = GREATEST(best_score, 100), updated_at = NOW(), attempts= attempts + 1; 
+WHERE user_id = 1 AND quiz_id = 1; 
+SELECT * FROM user_quiz_stats ORDER BY updated_at DESC LIMIT 1; 
 UPDATE reviews SET rating = 4.0, updated_at = NOW() WHERE review_id = 4; 
-SELECT * FROM reviews ORDER BY updated_at DESC LIMIT 1;
-UPDATE quizes SET is_active = false WHERE quiz_id = 6;
-SELECT * FROM quizes WHERE is_active = false;
-UPDATE users SET username = 'shadow_specter2001', email = 'specter2001@example.net' WHERE user_id = 1;
+SELECT * FROM reviews ORDER BY updated_at DESC LIMIT 1; 
+UPDATE quizes SET is_active = false WHERE quiz_id = 6; 
+SELECT * FROM quizes WHERE is_active = false; 
+UPDATE users SET username = 'shadow_specter2001', email = 'specter2001@example.net' WHERE user_id = 1; 
 SELECT username, email FROM users WHERE user_id = 1;
-UPDATE questions SET is_active = false WHERE question_id = 6;
-SELECT * FROM questions WHERE is_active = false
-UPDATE users SET is_active = false WHERE user_id = 10;
-SELECT * FROM users WHERE is_active = false
+UPDATE questions SET is_active = false WHERE question_id = 6; 
+SELECT * FROM questions WHERE is_active = false; 
+UPDATE users SET is_active = false WHERE user_id = 10; 
+SELECT * FROM users WHERE is_active = false; 
+UPDATE quizes SET title = 'Основи SQL для початківців', time_limit = 720, updated_at = NOW() WHERE quiz_id = 1; 
+SELECT title FROM quizes ORDER BY updated_at DESC LIMIT 1; 
+UPDATE answer_options SET option_text = 'UPDATE', is_correct = false WHERE answer_option_id = 1; 
+UPDATE answer_options SET option_text = 'SELECT', is_correct = true WHERE answer_option_id = 2; 
+SELECT * FROM answer_options WHERE answer_option_id IN(1,2); 
+
+
 --DELETE
-DELETE FROM quiz_attempts WHERE attempt_status = 'cancelled';
-SELECT * FROM quiz_attempts WHERE attempt_status = 'cancelled';
+DELETE FROM quiz_attempts WHERE attempt_status = 'cancelled'; 
+SELECT * FROM quiz_attempts WHERE attempt_status = 'cancelled'; 
 DELETE FROM reviews WHERE review_id = 9;
 SELECT * FROM reviews WHERE review_id = 9;
 DELETE FROM questions WHERE question_id = 8;
 SELECT * FROM questions WHERE question_id = 8;
+DELETE FROM users WHERE user_id = 13;
+SELECT * FROM users WHERE user_id = 13;
 DELETE FROM users WHERE user_id = 13;
 SELECT * FROM users WHERE user_id = 13;
