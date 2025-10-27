@@ -10,7 +10,7 @@ GROUP BY q.title
 ORDER BY average_rating DESC NULLS LAST;
 
 SELECT u.username, COUNT(q.quiz_id) AS quiz_count FROM users u
-INNER JOIN quizes q USING(author_id)
+INNER JOIN quizes q ON u.user_id = q.author_id
 GROUP BY u.username
 ORDER BY quiz_count DESC;
 
@@ -241,4 +241,5 @@ GROUP BY
     user_id
 HAVING
     AVG(score) > (SELECT AVG(score) FROM quiz_attempts);
+
 
