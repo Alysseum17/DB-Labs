@@ -26,15 +26,15 @@ GROUP BY u.username
 ORDER BY average_rating_of_quizes DESC NULLS LAST;
 
 SELECT u.username, AVG(qa.score) AS average_score_on_easy FROM users u
-INNER JOIN quiz_attempts qa ON USING(user_id)
-INNER JOIN quizes q ON USING(quiz_id)
+INNER JOIN quiz_attempts qa USING(user_id)
+INNER JOIN quizes q USING(quiz_id)
 WHERE q.difficulty = 'easy' AND qa.attempt_status = 'completed' 
 GROUP BY u.username
 ORDER BY average_score_on_easy DESC NULLS LAST;
 
 SELECT u.username AS author_name, AVG(uqs.best_score) AS average_best_score FROM users u
 INNER JOIN quizes q ON u.user_id = q.author_id 
-LEFT JOIN user_quiz_stats uqs ON USING(quiz_id)
+LEFT JOIN user_quiz_stats uqs USING(quiz_id)
 GROUP BY u.username
 ORDER BY average_best_score DESC NULLS LAST;
 
@@ -241,5 +241,4 @@ GROUP BY
     user_id
 HAVING
     AVG(score) > (SELECT AVG(score) FROM quiz_attempts);
-
 
