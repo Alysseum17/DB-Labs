@@ -37,7 +37,7 @@ Calculates the average review rating for each quiz. Quizzes without reviews appe
 ```sql
 SELECT u.username, COUNT(q.quiz_id) AS quiz_count 
 FROM users u
-INNER JOIN quizes q USING(author_id)
+INNER JOIN quizes q ON u.user_id = q.author_id
 GROUP BY u.username
 ORDER BY quiz_count DESC;
 ```
