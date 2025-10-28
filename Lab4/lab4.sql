@@ -1,67 +1,64 @@
 --- 1 --- 
-SELECT q.title, COUNT(qa.attempt_id) AS attempt_count FROM quizes q
+SELECT q.quiz_id, q.title, COUNT(qa.attempt_id) AS attempt_count FROM quizes q
 LEFT JOIN quiz_attempts qa USING(quiz_id)
-GROUP BY q.title
+GROUP BY q.quiz_id, q.title
 ORDER BY attempt_count DESC;
 
-SELECT q.title, AVG(r.rating) AS average_rating FROM quizes q
+SELECT q.quiz_id, q.title, AVG(r.rating) AS average_rating FROM quizes q
 LEFT JOIN reviews r USING(quiz_id)
-GROUP BY q.title
+GROUP BY q.quiz_id, q.title
 ORDER BY average_rating DESC NULLS LAST;
 
-SELECT u.username, COUNT(q.quiz_id) AS quiz_count FROM users u
+SELECT u.user_id, u.username, COUNT(q.quiz_id) AS quiz_count FROM users u
 INNER JOIN quizes q ON u.user_id = q.author_id
-GROUP BY u.username
+GROUP BY u.user_id, u.username
 ORDER BY quiz_count DESC;
 
-SELECT q.title, qs.question_type, COUNT(qs.question_id) AS question_count FROM quizes q
+SELECT q.quiz_id, q.title, qs.question_type, COUNT(qs.question_id) AS question_count FROM quizes q
 INNER JOIN questions qs USING(quiz_id)
-GROUP BY q.title, qs.question_type 
+GROUP BY q.quiz_id, q.title, qs.question_type 
 ORDER BY q.title, qs.question_type;
 
-SELECT u.username AS author_name, AVG(r.rating) AS average_rating_of_quizes FROM users u
+SELECT u.user_id, u.username AS author_name, AVG(r.rating) AS average_rating_of_quizes FROM users u
 INNER JOIN quizes q ON u.user_id = q.author_id
 LEFT JOIN reviews r ON q.quiz_id = r.quiz_id
-GROUP BY u.username
+GROUP BY u.user_id, u.username
 ORDER BY average_rating_of_quizes DESC NULLS LAST;
 
-SELECT u.username, AVG(qa.score) AS average_score_on_easy FROM users u
+SELECT u.user_id, u.username, AVG(qa.score) AS average_score_on_easy FROM users u
 INNER JOIN quiz_attempts qa USING(user_id)
 INNER JOIN quizes q USING(quiz_id)
 WHERE q.difficulty = 'easy' AND qa.attempt_status = 'completed' 
-GROUP BY u.username
+GROUP BY u.user_id, u.username
 ORDER BY average_score_on_easy DESC NULLS LAST;
 
-SELECT u.username AS author_name, AVG(uqs.best_score) AS average_best_score FROM users u
+SELECT u.user_id, u.username AS author_name, AVG(uqs.best_score) AS average_best_score FROM users u
 INNER JOIN quizes q ON u.user_id = q.author_id 
 LEFT JOIN user_quiz_stats uqs USING(quiz_id)
-GROUP BY u.username
+GROUP BY u.user_id, u.username
 ORDER BY average_best_score DESC NULLS LAST;
 
-SELECT q.title, COUNT(qa.attempt_id) AS attempts_count FROM quizes q
+SELECT q.quiz_id, q.title, COUNT(qa.attempt_id) AS attempts_count FROM quizes q
 INNER JOIN quiz_attempts qa USING(quiz_id)
-GROUP BY q.title
+GROUP BY q.quiz_id, q.title
 HAVING COUNT(qa.attempt_id) >= 5
 ORDER BY attempts_count DESC;
 
-
-SELECT u.username, COUNT(q.quiz_id) AS quizes_count FROM users u 
+SELECT u.user_id, u.username, COUNT(q.quiz_id) AS quizes_count FROM users u 
 INNER JOIN quizes q ON u.user_id = q.author_id 
-GROUP BY u.username
+GROUP BY u.user_id, u.username
 HAVING COUNT(q.quiz_id) >= 3
 ORDER BY quizes_count DESC;
 
-
-SELECT q.title, AVG(r.rating) AS average_rating FROM quizes q
+SELECT q.quiz_id, q.title, AVG(r.rating) AS average_rating FROM quizes q
 INNER JOIN reviews r USING(quiz_id)
-GROUP BY q.title
+GROUP BY q.quiz_id, q.title
 HAVING AVG(r.rating) >= 4.0
 ORDER BY average_rating DESC;
 
 SELECT * FROM questions q
 FULL JOIN answer_options a USING(question_id)
 WHERE q.question_id IS NULL OR (a.answer_option_id IS NULL AND q.question_type IN('single_choice','multiple_choice'));
-
 --- 2 ---
 SELECT
   question_type,
@@ -75,9 +72,8 @@ FROM
 GROUP BY
   question_type;
 
-
 SELECT
-  q.title,
+  q.quiz_id, q.title,
   SUM(qs.points) AS total_possible_score
 FROM
   quizes q
@@ -88,9 +84,8 @@ GROUP BY
 ORDER BY
   total_possible_score DESC;
 
-
 SELECT
-  u.username,
+  u.user_id, u.username,
   COUNT(uqs.quiz_id) AS quizes_taken_count
 FROM
   users u
@@ -103,9 +98,8 @@ HAVING
 ORDER BY
   quizes_taken_count DESC;
 
-
 SELECT
-  q.title,
+  q.quiz_id, q.title,
   MIN(qa.score) AS min_score,
   MAX(qa.score) AS max_score,
   AVG(qa.score) AS average_score,
@@ -117,11 +111,10 @@ JOIN
 WHERE
   q.quiz_id = 2 AND qa.score IS NOT NULL
 GROUP BY
-  q.title;
-
+  q.quiz_id, q.title;
 
 SELECT
-  u.username,
+  u.user_id, u.username,
   COUNT(r.review_id) AS review_count
 FROM
   users u
@@ -131,7 +124,6 @@ GROUP BY
   u.user_id, u.username
 ORDER BY
   review_count DESC;
-
 
 SELECT
   qa.attempt_id,
@@ -144,7 +136,6 @@ RIGHT JOIN
 WHERE
   qa.quiz_id = 1;
 
-
 SELECT
   u.username,
   q.title
@@ -154,7 +145,6 @@ CROSS JOIN
   quizes q
 WHERE
   q.difficulty = 'easy';
-
 
 SELECT
   title,
@@ -166,7 +156,6 @@ WHERE
   quiz_id NOT IN (
     SELECT DISTINCT quiz_id FROM quiz_attempts
   );
-
 
 SELECT
   u.username,
@@ -241,4 +230,3 @@ GROUP BY
     user_id
 HAVING
     AVG(score) > (SELECT AVG(score) FROM quiz_attempts);
-
