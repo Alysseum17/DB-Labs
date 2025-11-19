@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS questions (
    quiz_id INTEGER NOT NULL REFERENCES quizes(quiz_id) ON DELETE CASCADE,
    question_text TEXT NOT NULL,
    question_type question_type NOT NULL,
-   points SMALLINT NOT NULL CHECK(points >= 0)
+   points SMALLINT NOT NULL CHECK(points >= 0),
    is_active BOOLEAN NOT NULL DEFAULT true
 );
 CREATE TABLE IF NOT EXISTS answer_options (
