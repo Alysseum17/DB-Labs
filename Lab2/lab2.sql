@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS users (
 	username VARCHAR(32) UNIQUE NOT NULL,
 	email VARCHAR(32) UNIQUE NOT NULL,
 	avatar_url VARCHAR(255),
-	created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+	created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
 	is_active BOOLEAN NOT NULL DEFAULT true
 );
 
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS quizes (
 	attempts_limit SMALLINT,
 	created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
 	updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-	difficulty DIFFICULTY
+	difficulty DIFFICULTY,
 	is_active BOOLEAN NOT NULL DEFAULT true
 );
 CREATE TABLE IF NOT EXISTS reviews (
@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS question_responses (
    attempt_id INTEGER NOT NULL REFERENCES quiz_attempts(attempt_id) ON DELETE CASCADE,
    question_id INTEGER NOT NULL REFERENCES questions(question_id) ON DELETE CASCADE,
    free_text_answer TEXT,
-   earned_points SMALLINT NOT NULL,
+   earned_points SMALLINT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS selected_answers (
    question_response_id INTEGER NOT NULL REFERENCES question_responses(question_response_id) ON DELETE CASCADE,
