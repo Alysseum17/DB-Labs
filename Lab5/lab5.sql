@@ -4,7 +4,7 @@ CREATE TYPE question_type AS ENUM ('single_choice', 'multiple_choice', 'free_tex
 CREATE TABLE IF NOT EXISTS users (
     user_id SERIAL PRIMARY KEY,
     username VARCHAR(32) UNIQUE NOT NULL,
-    email VARCHAR(32) UNIQUE NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
     avatar_url VARCHAR(255),
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     is_active BOOLEAN NOT NULL DEFAULT true
