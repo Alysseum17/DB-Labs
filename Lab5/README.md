@@ -49,14 +49,14 @@ erDiagram
         boolean is_active
     }
 
-    Answer_Options {
+    AnswerOptions {
         serial answer_option_id PK
         integer question_id FK
         text option_text
         boolean is_correct
     }
 
-    Quiz_Attempts {
+    QuizAttempts {
         serial attempt_id PK
         integer user_id FK
         integer quiz_id FK
@@ -65,7 +65,7 @@ erDiagram
         smallint score
     }
 
-    Questions_Responses {
+    QuestionsResponses {
         serial question_response_id PK
         integer attempt_id FK
         integer question_id FK
@@ -73,7 +73,7 @@ erDiagram
         smallint earned_points
     }
 
-    Selected_Answers {
+    SelectedAnswers {
         integer question_response_id PK,FK
         integer answer_option_id PK,FK
     }
@@ -81,19 +81,19 @@ erDiagram
     %% Зв'язки (Relationships)
     Users ||--o{ Quizes : "creates"
     Users ||--o{ Reviews : "writes"
-    Users ||--o{ Quiz_Attempts : "makes"
+    Users ||--o{ QuizAttempts : "makes"
     
     Quizes ||--o{ Reviews : "has"
     Quizes ||--o{ Questions  : "contains"
-    Quizes ||--o{ Quiz_Attempts : "is_taken_in"
+    Quizes ||--o{ QuizAttempts : "is_taken_in"
 
-    Questions  ||--o{ Answer_Options : "has_options"
-    Questions  ||--o{ Questions_Responses : "is_answered_in"
+    Questions  ||--o{ AnswerOptions : "has_options"
+    Questions  ||--o{ QuestionsResponses : "is_answered_in"
 
-    Quiz_Attempts ||--o{ Questions_Responses : "consists_of"
+    QuizAttempts ||--o{ QuestionsResponses : "consists_of"
     
-    Questions_Responses ||--o{ Selected_Answers : "includes"
-    Answer_Options ||--o{ Selected_Answers : "is_selected"
+    QuestionsResponses ||--o{ SelectedAnswers : "includes"
+    AnswerOptions ||--o{ SelectedAnswers : "is_selected"
 ```
 ### Users
 
