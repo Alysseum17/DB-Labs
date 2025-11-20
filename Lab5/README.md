@@ -11,7 +11,7 @@ erDiagram
     Users {
         serial user_id PK
         varchar(32) username
-        varchar(32) email
+        varchar(255) email
         varchar(255) avatar_url
         timestamp_with_time_zone created_at
         boolean is_active
