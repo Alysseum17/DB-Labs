@@ -8,29 +8,30 @@
 
 ```mermaid
 erDiagram
-    Users {
+    User {
         serial user_id PK
         varchar(32) username
         varchar(255) email
+        varchar(255) password_hash
         varchar(255) avatar_url
         timestamp_with_time_zone created_at
         boolean is_active
     }
 
-    Quizes {
+    Quiz {
         serial quiz_id PK
         integer author_id FK
         varchar(255) title
         text description
         integer time_limit
-        smallint attempts_limit
+        smallint attempt_limit
         timestamp_with_time_zone created_at
         timestamp_with_time_zone updated_at
         difficulty_enum difficulty
         boolean is_active
     }
 
-    Reviews {
+    Review {
         serial review_id PK
         integer user_id FK
         integer quiz_id FK
@@ -40,7 +41,7 @@ erDiagram
         timestamp_with_time_zone updated_at
     }
 
-    Questions  {
+    Question  {
         serial question_id PK
         integer quiz_id FK
         text question_text
@@ -49,15 +50,15 @@ erDiagram
         boolean is_active
     }
 
-    AnswerOptions {
+    AnswerOption {
         serial answer_option_id PK
         integer question_id FK
-        text option_text
+        text answer_text
         boolean is_correct
     }
 
-    QuizAttempts {
-        serial attempt_id PK
+    QuizAttempt {
+        serial quiz_attempt_id PK
         integer user_id FK
         integer quiz_id FK
         timestamp_with_time_zone started_at
@@ -65,35 +66,35 @@ erDiagram
         smallint score
     }
 
-    QuestionsResponses {
+    QuestionResponse {
         serial question_response_id PK
-        integer attempt_id FK
+        integer quiz_attempt_id FK
         integer question_id FK
         text free_text_answer
         smallint earned_points
     }
 
-    SelectedAnswers {
+    SelectedAnswer {
         integer question_response_id PK,FK
         integer answer_option_id PK,FK
     }
 
     %% Зв'язки (Relationships)
-    Users ||--o{ Quizes : "creates"
-    Users ||--o{ Reviews : "writes"
-    Users ||--o{ QuizAttempts : "makes"
+    User ||--o{ Quiz : "creates"
+    User ||--o{ Review : "writes"
+    User ||--o{ QuizAttempt : "makes"
     
-    Quizes ||--o{ Reviews : "has"
-    Quizes ||--o{ Questions  : "contains"
-    Quizes ||--o{ QuizAttempts : "is_taken_in"
+    Quiz ||--o{ Review : "has"
+    Quiz ||--o{ Question  : "contains"
+    Quiz ||--o{ QuizAttempt : "is_taken_in"
 
-    Questions  ||--o{ AnswerOptions : "has_options"
-    Questions  ||--o{ QuestionsResponses : "is_answered_in"
+    Question  ||--o{ AnswerOption : "has_options"
+    Question  ||--o{ QuestionResponse : "is_answered_in"
 
-    QuizAttempts ||--o{ QuestionsResponses : "consists_of"
+    QuizAttempt ||--o{ QuestionResponse : "consists_of"
     
-    QuestionsResponses ||--o{ SelectedAnswers : "includes"
-    AnswerOptions ||--o{ SelectedAnswers : "is_selected"
+    QuestionResponse ||--o{ SelectedAnswer : "includes"
+    AnswerOption ||--o{ SelectedAnswer : "is_selected"
 ```
 ### Users
 
@@ -107,7 +108,7 @@ erDiagram
 
 <img width="905" height="220" alt="image" src="https://github.com/user-attachments/assets/a814c4d9-d12b-48a6-a2d3-0401e64ebc4c" />
 
-### Questions
+### Question
 
 <img width="822" height="670" alt="image" src="https://github.com/user-attachments/assets/49e39351-21bf-4eb1-b9f6-4eebd68e369c" />
 
