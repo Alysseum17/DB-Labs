@@ -1,80 +1,81 @@
-CREATE TYPE difficulty AS ENUM ('easy','medium','hard');
-CREATE TYPE question_type AS ENUM ('single_choice', 'multiple_choice', 'free_text');
+CREATE TYPE Difficulty AS ENUM ('easy','medium','hard');
+CREATE TYPE QuestionType AS ENUM ('single_choice', 'multiple_choice', 'free_text');
 
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE IF NOT EXISTS User (
     user_id SERIAL PRIMARY KEY,
     username VARCHAR(32) UNIQUE NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL DEFAULT 'temporary_hash',
     avatar_url VARCHAR(255),
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     is_active BOOLEAN NOT NULL DEFAULT true
 );
 
-CREATE TABLE IF NOT EXISTS quizes (
+CREATE TABLE IF NOT EXISTS Quiz (
     quiz_id SERIAL PRIMARY KEY,
-    author_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    author_id INTEGER NOT NULL REFERENCES User(user_id) ON DELETE CASCADE,
     title VARCHAR(255) NOT NULL,
     description TEXT,
     time_limit INTEGER,
-    attempts_limit SMALLINT,
+    attempt_limit SMALLINT,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     difficulty DIFFICULTY,
     is_active BOOLEAN NOT NULL DEFAULT true
 );
 
-CREATE TABLE IF NOT EXISTS reviews (
+CREATE TABLE IF NOT EXISTS Review (
     review_id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
-    quiz_id INTEGER NOT NULL REFERENCES quizes(quiz_id) ON DELETE CASCADE,
+    user_id INTEGER NOT NULL REFERENCES User(user_id) ON DELETE CASCADE,
+    quiz_id INTEGER NOT NULL REFERENCES Quiz(quiz_id) ON DELETE CASCADE,
     rating NUMERIC(2,1) NOT NULL CHECK(rating >=0 AND rating <=5),
     review_text TEXT,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS questions (
+CREATE TABLE IF NOT EXISTS Question (
     question_id SERIAL PRIMARY KEY,
-    quiz_id INTEGER NOT NULL REFERENCES quizes(quiz_id) ON DELETE CASCADE,
+    quiz_id INTEGER NOT NULL REFERENCES Quiz(quiz_id) ON DELETE CASCADE,
     question_text TEXT NOT NULL,
     question_type question_type NOT NULL,
     points SMALLINT NOT NULL CHECK(points >= 0),
     is_active BOOLEAN NOT NULL DEFAULT true
 );
 
-CREATE TABLE IF NOT EXISTS answer_options (
+CREATE TABLE IF NOT EXISTS AnswerOption (
     answer_option_id SERIAL PRIMARY KEY,
-    question_id INTEGER NOT NULL REFERENCES questions(question_id) ON DELETE CASCADE,
-    option_text TEXT NOT NULL,
+    question_id INTEGER NOT NULL REFERENCES Question(question_id) ON DELETE CASCADE,
+    answer_text TEXT NOT NULL,
     is_correct BOOLEAN NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS quiz_attempts (
-    attempt_id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
-    quiz_id INTEGER NOT NULL REFERENCES quizes(quiz_id) ON DELETE CASCADE,
+CREATE TABLE IF NOT EXISTS QuizAttempt (
+    quiz_attempt_id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES User(user_id) ON DELETE CASCADE,
+    quiz_id INTEGER NOT NULL REFERENCES Quiz(quiz_id) ON DELETE CASCADE,
     started_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     finished_at TIMESTAMP WITH TIME ZONE,
     score SMALLINT CHECK(score >= 0 AND score <= 100)
 );
 
-CREATE TABLE IF NOT EXISTS question_responses (
+CREATE TABLE IF NOT EXISTS QuestionResponse (
     question_response_id SERIAL PRIMARY KEY,
-    attempt_id INTEGER NOT NULL REFERENCES quiz_attempts(attempt_id) ON DELETE CASCADE,
-    question_id INTEGER NOT NULL REFERENCES questions(question_id) ON DELETE CASCADE,
+    quiz_attempt_id INTEGER NOT NULL REFERENCES QuizAttempt(quiz_attempt_id) ON DELETE CASCADE,
+    question_id INTEGER NOT NULL REFERENCES Question(question_id) ON DELETE CASCADE,
     free_text_answer TEXT,
-    earned_points SMALLINT NOT NULL
+    earned_points SMALLINT
 );
 
-CREATE TABLE IF NOT EXISTS selected_answers (
-    question_response_id INTEGER NOT NULL REFERENCES question_responses(question_response_id) ON DELETE CASCADE,
-    answer_option_id INTEGER NOT NULL REFERENCES answer_options(answer_option_id) ON DELETE CASCADE,
+CREATE TABLE IF NOT EXISTS SelectedAnswer (
+    question_response_id INTEGER NOT NULL REFERENCES QuestionResponse(question_response_id) ON DELETE CASCADE,
+    answer_option_id INTEGER NOT NULL REFERENCES AnswerOption(answer_option_id) ON DELETE CASCADE,
     PRIMARY KEY (question_response_id, answer_option_id)
 );
 
-CREATE TABLE IF NOT EXISTS user_quiz_stats (
-    user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
-    quiz_id INTEGER NOT NULL REFERENCES quizes(quiz_id) ON DELETE CASCADE,
+CREATE TABLE IF NOT EXISTS UserQuizStats (
+    user_id INTEGER NOT NULL REFERENCES User(user_id) ON DELETE CASCADE,
+    quiz_id INTEGER NOT NULL REFERENCES Quiz(quiz_id) ON DELETE CASCADE,
     best_score SMALLINT DEFAULT 0,
     last_score SMALLINT DEFAULT 0,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -83,7 +84,7 @@ CREATE TABLE IF NOT EXISTS user_quiz_stats (
     PRIMARY KEY (user_id, quiz_id)
 );
 
-INSERT INTO users (username, email, avatar_url, created_at) VALUES
+INSERT INTO User (username, email, avatar_url, created_at) VALUES
 ('shadow_specter', 'specter@example.net', 'https://example.com/avatars/specter.png', '2023-05-15 10:30:00'),
 ('nebula_nomad', 'nomad@example.org', NULL, '2022-11-20 18:45:10'),
 ('circuit_charmer', 'charmer@example.com', 'https://example.com/avatars/charmer.png', '2024-01-05 12:00:00'),
@@ -95,7 +96,7 @@ INSERT INTO users (username, email, avatar_url, created_at) VALUES
 ('karma_kernel', 'kernel@example.org', NULL, '2020-09-25 17:00:00'),
 ('omega_operator', 'operator@example.com', 'https://example.com/avatars/operator.png', '2024-05-01 11:11:11');
 
-INSERT INTO quizes (author_id, title, description, time_limit, attempts_limit, difficulty, created_at, updated_at) VALUES
+INSERT INTO Quiz (author_id, title, description, time_limit, attempts_limit, difficulty, created_at, updated_at) VALUES
 (1, 'Основи SQL', 'Тест на знання базових команд SELECT, INSERT, UPDATE.', 600, 3, 'easy', '2023-06-01 11:00:00', '2023-06-02 14:20:00'),
 (7, 'Історія України', NULL, 1200, 2, 'medium', '2023-07-15 15:30:00', '2023-07-15 15:30:00'),
 (3, 'Література XX століття', 'Впізнайте автора за цитатою або твором.', 900, NULL, 'hard', '2023-09-10 18:00:00', '2023-09-12 10:05:00'),
@@ -109,7 +110,7 @@ INSERT INTO quizes (author_id, title, description, time_limit, attempts_limit, d
 (5, 'Вгадай країну по прапору', NULL, 450, 5, NULL, '2024-05-15 14:00:00', '2024-05-15 14:00:00'),
 (8, 'Класика кіно 90-х', 'Впізнай культовий фільм за відомим кадром або цитатою.', NULL, NULL, NULL, '2024-05-20 18:30:00', '2024-05-21 10:00:00');
 
-INSERT INTO reviews (user_id, quiz_id, rating, review_text, created_at) VALUES
+INSERT INTO Review (user_id, quiz_id, rating, review_text, created_at) VALUES
 (3, 1, 5, 'Чудовий тест для початківців! Все чітко і по темі.', '2023-06-03 12:15:00'),
 (5, 1, 4, 'Непогано, але хотілося б більше складних питань.', '2023-06-04 09:00:00'),
 (1, 2, 5, 'Дуже цікавий та пізнавальний тест. Дізнався багато нового.', '2023-08-01 16:45:00'),
@@ -118,7 +119,7 @@ INSERT INTO reviews (user_id, quiz_id, rating, review_text, created_at) VALUES
 (9, 10, 4, 'Good test for practice!', '2024-05-12 14:05:21'),
 (2, 4, 4, NULL, '2023-11-01 13:00:00');
 
-INSERT INTO questions (quiz_id, question_text, question_type, points) VALUES
+INSERT INTO Question (quiz_id, question_text, question_type, points) VALUES
 (1, 'Яка команда використовується для вибірки даних з таблиці?', 'single_choice', 10),
 (1, 'Які з цих операторів використовуються для фільтрації даних?', 'multiple_choice', 15),
 (1, 'Як називається процес об''єднання даних з кількох таблиць?', 'free_text', 10),
@@ -145,7 +146,7 @@ INSERT INTO questions (quiz_id, question_text, question_type, points) VALUES
 (12, 'Які з цих фільмів зняв Квентін Тарантіно?', 'multiple_choice', 15),
 (12, 'З якого фільму фраза "I''ll be back"?', 'free_text', 10);
 
-INSERT INTO answer_options (question_id, option_text, is_correct) VALUES
+INSERT INTO AnswerOption (question_id, answer_text, is_correct) VALUES
 (1, 'SELECT', TRUE), (1, 'UPDATE', FALSE), (1, 'DELETE', FALSE),
 (2, 'WHERE', TRUE), (2, 'HAVING', TRUE), (2, 'ORDER BY', FALSE), (2, 'GROUP BY', FALSE),
 (4, '1989', FALSE), (4, '1991', TRUE), (4, '1996', FALSE),
@@ -160,7 +161,7 @@ INSERT INTO answer_options (question_id, option_text, is_correct) VALUES
 (22, 'Китай', FALSE), (22, 'Японія', TRUE), (22, 'Туреччина', FALSE),
 (24, 'Кримінальне чтиво', TRUE), (24, 'Форрест Гамп', FALSE), (24, 'Скажені пси', TRUE), (24, 'Матриця', FALSE);
 
-INSERT INTO user_quiz_stats (user_id, quiz_id, best_score, last_score, attempts, created_at, updated_at) VALUES
+INSERT INTO UserQuizStats (user_id, quiz_id, best_score, last_score, attempts, created_at, updated_at) VALUES
 (1, 1, 95, 95, 3, '2025-10-14 17:10:00', '2025-10-14 21:42:00'),
 (2, 2, 78, 78, 1, '2025-10-11 11:05:00', '2025-10-11 11:05:00'),
 (3, 1, 80, 70, 2, '2025-09-20 18:00:00', '2025-09-21 19:15:00'),
@@ -172,7 +173,7 @@ INSERT INTO user_quiz_stats (user_id, quiz_id, best_score, last_score, attempts,
 (9, 10, 98, 98, 1, '2025-06-18 09:00:00', '2025-06-18 09:00:00'),
 (2, 1, 75, 75, 1, '2025-10-14 08:30:00', '2025-10-14 08:30:00');
 
-INSERT INTO quiz_attempts (user_id, quiz_id, started_at, finished_at, score) VALUES
+INSERT INTO QuizAttempt (user_id, quiz_id, started_at, finished_at, score) VALUES
 (1, 1, '2025-10-14 17:10:00', '2025-10-14 17:18:30', 85),
 (1, 1, '2025-10-14 19:00:00', '2025-10-14 19:15:00', 70),
 (1, 1, '2025-10-14 21:30:00', '2025-10-14 21:42:00', 95),
@@ -187,19 +188,19 @@ INSERT INTO quiz_attempts (user_id, quiz_id, started_at, finished_at, score) VAL
 
 --- Normalization
 
-DROP TABLE IF EXISTS user_quiz_stats;
+DROP TABLE IF EXISTS UserQuizstats;
 
 SELECT 
     qa.user_id,
     qa.quiz_id,
-    COUNT(qa.attempt_id) AS total_attempts,
+    COUNT(qa.quiz_attempt_id) AS total_attempts,
     MAX(qa.score) AS best_score,
     MAX(qa.finished_at) AS last_attempt_date,
     (SELECT score 
-     FROM quiz_attempts qa2 
+     FROM QuizAttempt qa2 
      WHERE qa2.user_id = qa.user_id 
        AND qa2.quiz_id = qa.quiz_id 
      ORDER BY started_at DESC 
      LIMIT 1) AS last_score
-FROM quiz_attempts qa
+FROM QuizAttempt qa
 GROUP BY qa.user_id, qa.quiz_id;
