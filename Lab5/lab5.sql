@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS User (
     user_id SERIAL PRIMARY KEY,
     username VARCHAR(32) UNIQUE NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL DEFAULT 'temporary_hash',
+    password_hash VARCHAR(255) NOT NULL,
     avatar_url VARCHAR(255),
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     is_active BOOLEAN NOT NULL DEFAULT true
@@ -84,17 +84,17 @@ CREATE TABLE IF NOT EXISTS UserQuizStats (
     PRIMARY KEY (user_id, quiz_id)
 );
 
-INSERT INTO User (username, email, avatar_url, created_at) VALUES
-('shadow_specter', 'specter@example.net', 'https://example.com/avatars/specter.png', '2023-05-15 10:30:00'),
-('nebula_nomad', 'nomad@example.org', NULL, '2022-11-20 18:45:10'),
-('circuit_charmer', 'charmer@example.com', 'https://example.com/avatars/charmer.png', '2024-01-05 12:00:00'),
-('fusion_fanatic', 'fanatic@example.net', 'https://example.com/avatars/fanatic.png', '2023-08-01 22:15:30'),
-('vector_voyager', 'voyager@example.org', NULL, '2021-07-19 09:05:25'),
-('phoenix_phreak', 'phreak@example.com', 'https://example.com/avatars/phreak.png', '2024-03-22 14:20:00'),
-('zenith_zephyr', 'zephyr@example.net', NULL, '2022-02-10 23:55:45'),
-('iron_impulse', 'impulse@example.com', 'https://example.com/avatars/impulse.png', '2023-12-30 08:10:15'),
-('karma_kernel', 'kernel@example.org', NULL, '2020-09-25 17:00:00'),
-('omega_operator', 'operator@example.com', 'https://example.com/avatars/operator.png', '2024-05-01 11:11:11');
+INSERT INTO User (username, email, password_hash, avatar_url, created_at) VALUES
+('shadow_specter', 'specter@example.net', 'hash_specter_01', 'https://example.com/avatars/specter.png', '2023-05-15 10:30:00'),
+('nebula_nomad', 'nomad@example.org', 'hash_nomad_02', NULL, '2022-11-20 18:45:10'),
+('circuit_charmer', 'charmer@example.com', 'hash_charmer_03', 'https://example.com/avatars/charmer.png', '2024-01-05 12:00:00'),
+('fusion_fanatic', 'fanatic@example.net', 'hash_fanatic_04', 'https://example.com/avatars/fanatic.png', '2023-08-01 22:15:30'),
+('vector_voyager', 'voyager@example.org', 'hash_voyager_05', NULL, '2021-07-19 09:05:25'),
+('phoenix_phreak', 'phreak@example.com', 'hash_phreak_06', 'https://example.com/avatars/phreak.png', '2024-03-22 14:20:00'),
+('zenith_zephyr', 'zephyr@example.net', 'hash_zephyr_07', NULL, '2022-02-10 23:55:45'),
+('iron_impulse', 'impulse@example.com', 'hash_impulse_08', 'https://example.com/avatars/impulse.png', '2023-12-30 08:10:15'),
+('karma_kernel', 'kernel@example.org', 'hash_kernel_09', NULL, '2020-09-25 17:00:00'),
+('omega_operator', 'operator@example.com', 'hash_operator_10', 'https://example.com/avatars/operator.png', '2024-05-01 11:11:11');
 
 INSERT INTO Quiz (author_id, title, description, time_limit, attempts_limit, difficulty, created_at, updated_at) VALUES
 (1, 'Основи SQL', 'Тест на знання базових команд SELECT, INSERT, UPDATE.', 600, 3, 'easy', '2023-06-01 11:00:00', '2023-06-02 14:20:00'),
