@@ -5,37 +5,37 @@
 Для підтвердження коректності структури бази даних було визначено функціональні залежності для основних сутностей.
 Позначення: $X \rightarrow Y$ (X однозначно визначає Y).
 
-**1. Таблиця `users`**
+**1. Таблиця `User`**
 * **PK:** `user_id`
 * **FD:** `user_id` $\rightarrow$ `username`, `email`, `avatar_url`, `created_at`, `is_active`
 
-**2. Таблиця `quizes`**
+**2. Таблиця `Quize`**
 * **PK:** `quiz_id`
-* **FD:** `quiz_id` $\rightarrow$ `author_id`, `title`, `description`, `time_limit`, `attempts_limit`, `difficulty`, `created_at`, `updated_at`, `is_active`
+* **FD:** `quiz_id` $\rightarrow$ `author_id`, `title`, `description`, `time_limit`, `attempt_limit`, `difficulty`, `created_at`, `updated_at`, `is_active`
 * *Примітка:* `author_id` визначає автора, але не навпаки (автор може мати багато квізів), тому залежність йде від `quiz_id`.
 
-**3. Таблиця `questions`**
+**3. Таблиця `Question`**
 * **PK:** `question_id`
 * **FD:** `question_id` $\rightarrow$ `quiz_id`, `question_text`, `question_type`, `points`, `is_active`
 
-**4. Таблиця `answer_options`**
+**4. Таблиця `AnswerOption`**
 * **PK:** `answer_option_id`
-* **FD:** `answer_option_id` $\rightarrow$ `question_id`, `option_text`, `is_correct`
+* **FD:** `answer_option_id` $\rightarrow$ `Q uestion_id`, `answer_text`, `is_correct`
 
-**5. Таблиця `reviews`**
+**5. Таблиця `Review`**
 * **PK:** `review_id`
 * **FD:** `review_id` $\rightarrow$ `user_id`, `quiz_id`, `rating`, `review_text`, `created_at`, `updated_at`
 * *Примітка:* Рейтинг залежить від конкретного відгуку (`review_id`), а не просто від пари "користувач-квіз" (якщо дозволено кілька відгуків, хоча за логікою частіше один, але технічно PK тут `review_id`).
 
-**6. Таблиця `quiz_attempts`**
+**6. Таблиця `QuizAttempt`**
 * **PK:** `attempt_id`
 * **FD:** `attempt_id` $\rightarrow$ `user_id`, `quiz_id`, `started_at`, `finished_at`, `score`
 
-**7. Таблиця `question_responses`**
+**7. Таблиця `QuestionResponses`**
 * **PK:** `question_response_id`
 * **FD:** `question_response_id` $\rightarrow$ `attempt_id`, `question_id`, `free_text_answer`, `earned_points`
 
-**8. Таблиця `selected_answers`**
+**8. Таблиця `SelectedAnswer`**
 * **PK:** `(question_response_id, answer_option_id)` (Складений ключ)
 * **FD:** Тривіальна залежність. Весь рядок ідентифікується повним ключем. Неключових атрибутів немає.
 
