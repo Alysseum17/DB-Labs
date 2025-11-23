@@ -31,7 +31,7 @@
 * **PK:** `attempt_id`
 * **FD:** `attempt_id` $\rightarrow$ `user_id`, `quiz_id`, `started_at`, `finished_at`, `score`
 
-**7. Таблиця `QuestionResponses`**
+**7. Таблиця `QuestionResponse`**
 * **PK:** `question_response_id`
 * **FD:** `question_response_id` $\rightarrow$ `attempt_id`, `question_id`, `free_text_answer`, `earned_points`
 
