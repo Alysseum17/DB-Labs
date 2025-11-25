@@ -20,7 +20,7 @@
 
 **4. Таблиця `AnswerOption`**
 * **PK:** `answer_option_id`
-* **FD:** `answer_option_id` $\rightarrow$ `Question_id`, `answer_text`, `is_correct`
+* **FD:** `answer_option_id` $\rightarrow$ `question_id`, `answer_text`, `is_correct`
 
 **5. Таблиця `Review`**
 * **PK:** `review_id`
