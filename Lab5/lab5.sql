@@ -1,7 +1,7 @@
 CREATE TYPE Difficulty AS ENUM ('easy','medium','hard');
 CREATE TYPE QuestionType AS ENUM ('single_choice', 'multiple_choice', 'free_text');
 
-CREATE TABLE IF NOT EXISTS User (
+CREATE TABLE IF NOT EXISTS Users (
     user_id SERIAL PRIMARY KEY,
     username VARCHAR(32) UNIQUE NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS User (
 
 CREATE TABLE IF NOT EXISTS Quiz (
     quiz_id SERIAL PRIMARY KEY,
-    author_id INTEGER NOT NULL REFERENCES User(user_id) ON DELETE CASCADE,
+    author_id INTEGER NOT NULL REFERENCES Users(user_id) ON DELETE CASCADE,
     title VARCHAR(255) NOT NULL,
     description TEXT,
     time_limit INTEGER,
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS Quiz (
 
 CREATE TABLE IF NOT EXISTS Review (
     review_id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL REFERENCES User(user_id) ON DELETE CASCADE,
+    user_id INTEGER NOT NULL REFERENCES Users(user_id) ON DELETE CASCADE,
     quiz_id INTEGER NOT NULL REFERENCES Quiz(quiz_id) ON DELETE CASCADE,
     rating NUMERIC(2,1) NOT NULL CHECK(rating >=0 AND rating <=5),
     review_text TEXT,
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS Question (
     question_id SERIAL PRIMARY KEY,
     quiz_id INTEGER NOT NULL REFERENCES Quiz(quiz_id) ON DELETE CASCADE,
     question_text TEXT NOT NULL,
-    question_type question_type NOT NULL,
+    question_type QuestionType NOT NULL,
     points SMALLINT NOT NULL CHECK(points >= 0),
     is_active BOOLEAN NOT NULL DEFAULT true
 );
@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS AnswerOption (
 
 CREATE TABLE IF NOT EXISTS QuizAttempt (
     quiz_attempt_id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL REFERENCES User(user_id) ON DELETE CASCADE,
+    user_id INTEGER NOT NULL REFERENCES Users(user_id) ON DELETE CASCADE,
     quiz_id INTEGER NOT NULL REFERENCES Quiz(quiz_id) ON DELETE CASCADE,
     started_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     finished_at TIMESTAMP WITH TIME ZONE,
@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS SelectedAnswer (
 );
 
 CREATE TABLE IF NOT EXISTS UserQuizStats (
-    user_id INTEGER NOT NULL REFERENCES User(user_id) ON DELETE CASCADE,
+    user_id INTEGER NOT NULL REFERENCES Users(user_id) ON DELETE CASCADE,
     quiz_id INTEGER NOT NULL REFERENCES Quiz(quiz_id) ON DELETE CASCADE,
     best_score SMALLINT DEFAULT 0,
     last_score SMALLINT DEFAULT 0,
@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS UserQuizStats (
     PRIMARY KEY (user_id, quiz_id)
 );
 
-INSERT INTO User (username, email, password_hash, avatar_url, created_at) VALUES
+INSERT INTO Users (username, email, password_hash, avatar_url, created_at) VALUES
 ('shadow_specter', 'specter@example.net', 'hash_specter_01', 'https://example.com/avatars/specter.png', '2023-05-15 10:30:00'),
 ('nebula_nomad', 'nomad@example.org', 'hash_nomad_02', NULL, '2022-11-20 18:45:10'),
 ('circuit_charmer', 'charmer@example.com', 'hash_charmer_03', 'https://example.com/avatars/charmer.png', '2024-01-05 12:00:00'),
@@ -96,7 +96,7 @@ INSERT INTO User (username, email, password_hash, avatar_url, created_at) VALUES
 ('karma_kernel', 'kernel@example.org', 'hash_kernel_09', NULL, '2020-09-25 17:00:00'),
 ('omega_operator', 'operator@example.com', 'hash_operator_10', 'https://example.com/avatars/operator.png', '2024-05-01 11:11:11');
 
-INSERT INTO Quiz (author_id, title, description, time_limit, attempts_limit, difficulty, created_at, updated_at) VALUES
+INSERT INTO Quiz (author_id, title, description, time_limit, attempt_limit, difficulty, created_at, updated_at) VALUES
 (1, 'Основи SQL', 'Тест на знання базових команд SELECT, INSERT, UPDATE.', 600, 3, 'easy', '2023-06-01 11:00:00', '2023-06-02 14:20:00'),
 (7, 'Історія України', NULL, 1200, 2, 'medium', '2023-07-15 15:30:00', '2023-07-15 15:30:00'),
 (3, 'Література XX століття', 'Впізнайте автора за цитатою або твором.', 900, NULL, 'hard', '2023-09-10 18:00:00', '2023-09-12 10:05:00'),
