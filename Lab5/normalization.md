@@ -9,7 +9,7 @@
 * **PK:** `user_id`
 * **FD:** `user_id` $\rightarrow$ `username`, `email`, `avatar_url`, `created_at`, `is_active`
 
-**2. Таблиця `Quize`**
+**2. Таблиця `Quiz`**
 * **PK:** `quiz_id`
 * **FD:** `quiz_id` $\rightarrow$ `author_id`, `title`, `description`, `time_limit`, `attempt_limit`, `difficulty`, `created_at`, `updated_at`, `is_active`
 * *Примітка:* `author_id` визначає автора, але не навпаки (автор може мати багато квізів), тому залежність йде від `quiz_id`.
