@@ -711,7 +711,7 @@ An API route (based on Express) was created to test data retrieval using `prisma
 
 ```typescript
 import express from 'express';
-import { prisma } from './prisma'; // Adjust import based on your setup
+import { prisma } from './prisma'; 
 
 const app = express();
 
