@@ -576,30 +576,63 @@ async function main() {
   });
   console.log('Questions created');
 
-  await prisma.answerOption.createMany({
+ await prisma.answerOption.createMany({
     data: [
-      { answer_option_id: 1, question_id: 1, answer_text: 'SELECT', is_correct: true }, 
-      { answer_option_id: 2, question_id: 1, answer_text: 'UPDATE', is_correct: false }, 
+      { answer_option_id: 1, question_id: 1, answer_text: 'SELECT', is_correct: true },
+      { answer_option_id: 2, question_id: 1, answer_text: 'UPDATE', is_correct: false },
       { answer_option_id: 3, question_id: 1, answer_text: 'DELETE', is_correct: false },
-      { answer_option_id: 4, question_id: 2, answer_text: 'WHERE', is_correct: true }, 
-      { answer_option_id: 5, question_id: 2, answer_text: 'HAVING', is_correct: true }, 
-      { answer_option_id: 6, question_id: 2, answer_text: 'ORDER BY', is_correct: false }, 
+      { answer_option_id: 4, question_id: 2, answer_text: 'WHERE', is_correct: true },
+      { answer_option_id: 5, question_id: 2, answer_text: 'HAVING', is_correct: true },
+      { answer_option_id: 6, question_id: 2, answer_text: 'ORDER BY', is_correct: false },
       { answer_option_id: 7, question_id: 2, answer_text: 'GROUP BY', is_correct: false },
-      { answer_option_id: 8, question_id: 4, answer_text: '1989', is_correct: false }, 
-      { answer_option_id: 9, question_id: 4, answer_text: '1991', is_correct: true }, 
-      { answer_option_id: 10, question_id: 4, answer_text: '1996', is_correct: false },
-      { answer_option_id: 11, question_id: 6, answer_text: 'Fyodor Dostoevsky', is_correct: false }, 
-      { answer_option_id: 12, question_id: 6, answer_text: 'Leo Tolstoy', is_correct: false }, 
-      { answer_option_id: 13, question_id: 6, answer_text: 'Mikhail Bulgakov', is_correct: true },
-      { answer_option_id: 14, question_id: 8, answer_text: 'Nile', is_correct: false }, { answer_option_id: 15, question_id: 8, answer_text: 'Amazon', is_correct: true }, { answer_option_id: 16, question_id: 8, answer_text: 'Parana', is_correct: true }, { answer_option_id: 17, question_id: 8, answer_text: 'Yangtze', is_correct: false },
-      { answer_option_id: 18, question_id: 10, answer_text: 'docker run', is_correct: false }, { answer_option_id: 19, question_id: 10, answer_text: 'docker build', is_correct: true }, { answer_option_id: 20, question_id: 10, answer_text: 'docker pull', is_correct: false },
-      { answer_option_id: 21, question_id: 12, answer_text: 'Elephant', is_correct: false }, { answer_option_id: 22, question_id: 12, answer_text: 'Blue Whale', is_correct: true }, { answer_option_id: 23, question_id: 12, answer_text: 'Giraffe', is_correct: false },
-      { answer_option_id: 24, question_id: 14, answer_text: 'O(n)', is_correct: false }, { answer_option_id: 25, question_id: 14, answer_text: 'O(n log n)', is_correct: false }, { answer_option_id: 26, question_id: 14, answer_text: 'O(n^2)', is_correct: true },
-      { answer_option_id: 27, question_id: 16, answer_text: 'Mars', is_correct: false }, { answer_option_id: 28, question_id: 16, answer_text: 'Jupiter', is_correct: true }, { answer_option_id: 29, question_id: 16, answer_text: 'Saturn', is_correct: true }, { answer_option_id: 30, question_id: 16, answer_text: 'Venus', is_correct: false },
-      { answer_option_id: 31, question_id: 18, answer_text: 'Traffic allowed', is_correct: false }, { answer_option_id: 32, question_id: 18, answer_text: 'Traffic forbidden', is_correct: true }, { answer_option_id: 33, question_id: 18, answer_text: 'Get ready to move', is_correct: false },
-      { answer_option_id: 34, question_id: 20, answer_text: 'Continue', is_correct: false }, { answer_option_id: 35, question_id: 20, answer_text: 'Surrender/Quit', is_correct: true }, { answer_option_id: 36, question_id: 20, answer_text: 'Start', is_correct: false },
-      { answer_option_id: 37, question_id: 22, answer_text: 'China', is_correct: false }, { answer_option_id: 38, question_id: 22, answer_text: 'Japan', is_correct: true }, { answer_option_id: 39, question_id: 22, answer_text: 'Turkey', is_correct: false },
-      { answer_option_id: 40, question_id: 24, answer_text: 'Pulp Fiction', is_correct: true }, { answer_option_id: 41, question_id: 24, answer_text: 'Forrest Gump', is_correct: false }, { answer_option_id: 42, question_id: 24, answer_text: 'Reservoir Dogs', is_correct: true }, { answer_option_id: 43, question_id: 24, answer_text: 'The Matrix', is_correct: false },
+      { answer_option_id: 8, question_id: 3, answer_text: 'Join', is_correct: true },
+      { answer_option_id: 9, question_id: 4, answer_text: '1989', is_correct: false },
+      { answer_option_id: 10, question_id: 4, answer_text: '1991', is_correct: true }, 
+      { answer_option_id: 11, question_id: 4, answer_text: '1996', is_correct: false },
+      { answer_option_id: 12, question_id: 5, answer_text: 'Ivan Vyhovsky', is_correct: true },
+      { answer_option_id: 13, question_id: 6, answer_text: 'Fyodor Dostoevsky', is_correct: false },
+      { answer_option_id: 14, question_id: 6, answer_text: 'Leo Tolstoy', is_correct: false },
+      { answer_option_id: 15, question_id: 6, answer_text: 'Mikhail Bulgakov', is_correct: true },
+      { answer_option_id: 16, question_id: 7, answer_text: 'Mykola Khvylovy', is_correct: true },
+      { answer_option_id: 17, question_id: 8, answer_text: 'Nile', is_correct: false },
+      { answer_option_id: 18, question_id: 8, answer_text: 'Amazon', is_correct: true },
+      { answer_option_id: 19, question_id: 8, answer_text: 'Parana', is_correct: true },
+      { answer_option_id: 20, question_id: 8, answer_text: 'Yangtze', is_correct: false },
+      { answer_option_id: 21, question_id: 9, answer_text: 'Antarctic Desert', is_correct: true },
+      { answer_option_id: 22, question_id: 10, answer_text: 'docker run', is_correct: false },
+      { answer_option_id: 23, question_id: 10, answer_text: 'docker build', is_correct: true },
+      { answer_option_id: 24, question_id: 10, answer_text: 'docker pull', is_correct: false },
+      { answer_option_id: 25, question_id: 11, answer_text: 'Lightweight executable package', is_correct: true },
+      { answer_option_id: 26, question_id: 12, answer_text: 'Elephant', is_correct: false },
+      { answer_option_id: 27, question_id: 12, answer_text: 'Blue Whale', is_correct: true },
+      { answer_option_id: 28, question_id: 12, answer_text: 'Giraffe', is_correct: false },
+      { answer_option_id: 29, question_id: 13, answer_text: 'Penguin', is_correct: true },
+      { answer_option_id: 30, question_id: 14, answer_text: 'O(n)', is_correct: false },
+      { answer_option_id: 31, question_id: 14, answer_text: 'O(n log n)', is_correct: false },
+      { answer_option_id: 32, question_id: 14, answer_text: 'O(n^2)', is_correct: true },
+      { answer_option_id: 33, question_id: 15, answer_text: 'Function calling itself', is_correct: true },
+      { answer_option_id: 34, question_id: 16, answer_text: 'Mars', is_correct: false },
+      { answer_option_id: 35, question_id: 16, answer_text: 'Jupiter', is_correct: true },
+      { answer_option_id: 36, question_id: 16, answer_text: 'Saturn', is_correct: true },
+      { answer_option_id: 37, question_id: 16, answer_text: 'Venus', is_correct: false },
+      { answer_option_id: 38, question_id: 17, answer_text: 'Alexey Leonov', is_correct: true },
+      { answer_option_id: 39, question_id: 18, answer_text: 'Traffic allowed', is_correct: false },
+      { answer_option_id: 40, question_id: 18, answer_text: 'Traffic forbidden', is_correct: true },
+      { answer_option_id: 41, question_id: 18, answer_text: 'Get ready to move', is_correct: false },
+      { answer_option_id: 42, question_id: 19, answer_text: 'Road with priority', is_correct: true },
+      { answer_option_id: 43, question_id: 20, answer_text: 'Continue', is_correct: false },
+      { answer_option_id: 44, question_id: 20, answer_text: 'Surrender/Quit', is_correct: true },
+      { answer_option_id: 45, question_id: 20, answer_text: 'Start', is_correct: false },
+      { answer_option_id: 46, question_id: 21, answer_text: 'I look forward to meeting you', is_correct: true },
+      { answer_option_id: 47, question_id: 22, answer_text: 'China', is_correct: false },
+      { answer_option_id: 48, question_id: 22, answer_text: 'Japan', is_correct: true },
+      { answer_option_id: 49, question_id: 22, answer_text: 'Turkey', is_correct: false },
+      { answer_option_id: 50, question_id: 23, answer_text: 'Red maple leaf', is_correct: true },
+      { answer_option_id: 51, question_id: 24, answer_text: 'Pulp Fiction', is_correct: true },
+      { answer_option_id: 52, question_id: 24, answer_text: 'Forrest Gump', is_correct: false },
+      { answer_option_id: 53, question_id: 24, answer_text: 'Reservoir Dogs', is_correct: true },
+      { answer_option_id: 54, question_id: 24, answer_text: 'The Matrix', is_correct: false },
+      { answer_option_id: 55, question_id: 25, answer_text: 'The Terminator', is_correct: true },
     ]
   });
   console.log('Answer options created');
@@ -632,12 +665,12 @@ async function main() {
   });
   console.log('Question responses created');
 
-  await prisma.selectedAnswer.createMany({
+ await prisma.selectedAnswer.createMany({
     data: [
       { question_response_id: 1, answer_option_id: 1 },
       { question_response_id: 2, answer_option_id: 4 },
       { question_response_id: 2, answer_option_id: 5 },
-      { question_response_id: 4, answer_option_id: 9 },
+      { question_response_id: 4, answer_option_id: 10 }, 
     ]
   });
   console.log('Selected answers created');
@@ -1001,11 +1034,11 @@ In this laboratory work, Prisma ORM was successfully configured. Five stages of 
 
 <img width="1742" height="521" alt="image" src="https://github.com/user-attachments/assets/030bfec8-64de-41fb-aac2-2d56a4d1277c" />
 
-<img width="1255" height="1236" alt="image" src="https://github.com/user-attachments/assets/68be7afc-9170-4d71-a454-ca9702c3dc90" />
+<img width="1559" height="1266" alt="image" src="https://github.com/user-attachments/assets/da91accd-6f41-48da-b1ed-6cd4f1d1d6dd" />
 
 <img width="1360" height="553" alt="image" src="https://github.com/user-attachments/assets/ef0a950b-ca43-44f9-9f34-0ca195468179" />
 
-<img width="914" height="527" alt="image" src="https://github.com/user-attachments/assets/a83ed821-5119-451a-be50-9abde583d10a" />
+<img width="867" height="582" alt="image" src="https://github.com/user-attachments/assets/30fe7102-dd30-43b7-9c3c-59efe2bea60f" />
 
 <img width="1791" height="520" alt="image" src="https://github.com/user-attachments/assets/d30f8666-de4b-4d20-a39d-2a773c0ee155" />
 
