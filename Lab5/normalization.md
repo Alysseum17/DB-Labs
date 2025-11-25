@@ -78,9 +78,9 @@
 CREATE TABLE UserQuizStat (
     user_id INTEGER,
     quiz_id INTEGER,
-    best_score SMALLINT, -- Дублювання! Можна обчислити як MAX(score)
-    attempts SMALLINT,   -- Дублювання! Можна обчислити як COUNT(*)
-    last_score SMALLINT, -- Дублювання! Останній запис по даті
+    best_score SMALLINT, -- Можна обчислити як MAX(score)
+    attempts SMALLINT,   -- Можна обчислити як COUNT(*)
+    last_score SMALLINT, -- Останній запис по даті
     PRIMARY KEY (user_id, quiz_id)
 );
 ```
